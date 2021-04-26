@@ -95,8 +95,13 @@ namespace Bev.Instruments.P9710
 
         public double GetMeasurementUncertainty(double current)
         {
-            double error = 0;
             var range = EstimateMeasurementRange(current);
+            return GetMeasurementUncertainty(current, range);
+        }
+
+        public double GetMeasurementUncertainty(double current, MeasurementRange range)
+        {
+            double error = 0;
             current = Math.Abs(current);
             switch (range)
             {
@@ -184,7 +189,7 @@ namespace Bev.Instruments.P9710
                 int answ = 0;
                 Int32.TryParse(s, out answ);
                 id += $"{Convert.ToChar(answ)}";
-            }           
+            }
             return id;
         }
 
