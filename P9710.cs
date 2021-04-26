@@ -10,6 +10,7 @@ namespace Bev.Instruments.P9710
         public P9710(string portName)
         {
             comPort = new SerialPort(portName, 9600);
+            DevicePort = portName;
             SelectAutorange();
         }
 
@@ -17,7 +18,8 @@ namespace Bev.Instruments.P9710
         public string InstrumentType => $"{ParseSoftwareVersion()[0]}-{GetDeviceVariant()}";
         public string InstrumentSerialNumber => GetDeviceSerialNumber();
         public string InstrumentFirmwareVersion => ParseSoftwareVersion()[1];
-        public string InstrumentID => $"{InstrumentType} {InstrumentFirmwareVersion} SN:{InstrumentSerialNumber}";
+        public string InstrumentID => $"{InstrumentType} {InstrumentFirmwareVersion} SN:{InstrumentSerialNumber} @ {DevicePort}";
+        public string DevicePort { get; }
         public string DetectorID => GetDetectorID();
         public string PhotometricUnit => Query("GU");
 
