@@ -19,6 +19,7 @@ namespace Bev.Instruments.P9710
         public string InstrumentSerialNumber => GetDeviceSerialNumber();
         public string InstrumentFirmwareVersion => ParseSoftwareVersion()[1];
         public string InstrumentID => $"{InstrumentType} {InstrumentFirmwareVersion} SN:{InstrumentSerialNumber} @ {DevicePort}";
+        public double InstrumentBattery => GetBatteryLevel();
         public string DevicePort { get; }
         public string DetectorID => GetDetectorID();
         public string PhotometricUnit => Query("GU");
@@ -27,7 +28,7 @@ namespace Bev.Instruments.P9710
         {
             double current;
             string answer = Query("MA");
-            if (Double.TryParse(answer, NumberStyles.Any, CultureInfo.InvariantCulture, out current))
+            if (double.TryParse(answer, NumberStyles.Any, CultureInfo.InvariantCulture, out current))
                 return current;
             else
                 return double.NaN;
@@ -183,6 +184,8 @@ namespace Bev.Instruments.P9710
         private string GetDetectorID()
         {
             string id = Query("GK");
+            if (string.IsNullOrWhiteSpace(id))
+                return "";
             for (int i = 0; i < 6; i++)
             {
                 string s = Query($"GC{i}");
@@ -191,6 +194,16 @@ namespace Bev.Instruments.P9710
                 id += $"{Convert.ToChar(answ)}";
             }
             return id;
+        }
+
+        private double GetBatteryLevel()
+        {
+            double battery;
+            string answer = Query("MB");
+            if (double.TryParse(answer, NumberStyles.Any, CultureInfo.InvariantCulture, out battery))
+                return battery;
+            else
+                return double.NaN;
         }
 
         private void SelectAutorange()
