@@ -7,6 +7,7 @@ namespace Bev.Instruments.P9710
 {
     public class P9710
     {
+
         public P9710(string portName)
         {
             comPort = new SerialPort(portName, 9600);
