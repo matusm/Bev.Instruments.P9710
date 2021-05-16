@@ -15,28 +15,27 @@ The library is composed of a single class. The constructor `P9710(string)` creat
 ### Methods
 
 * `double GetDetectorCurrent()`
-Gets the photo current in Ampere. On errors `double.NaN` is returned.
+Gets the photo current in Ampere. On errors `double.NaN` is returned. This is the prefered way to query the instrument.
  
 * `double GetPhotometricValue()`
 Gets the radiometric/photometric quantity for the connected radiometer head. Internally this value is just the photo current multiplied by a calibration factor. This factor is stored in the head's connector and transfered to the optometer on power-on. On errors `double.NaN` is returned.
-Error-prone! This method will be removed in future releases!
+Error-prone! Might be depricated in future releases!
  
 * `MeasurementRange GetMeasurementRange()`
-Explanation. This method is usefull for the detector current only!
+Gets the actual measurement range (for detector current). The possible ranges are defined in the manual. The returned range is valid only for the very moment of the call. A previous or subsequent call to `GetDetectorCurrent()` may be performed in a differen range. This is the consequence of the auto-range functionality. This method is usefull for the detector current only!
 
 * `MeasurementRange EstimateMeasurementRange(double)`
-Explanation. This method is usefull for the detector current only!
+The measurement range is estimated from a current value passed to the method. No comunication with the instrument is initiated during the call. If the instrument is in fixed range mode the returned range might be wrong. This method is usefull for the detector current only!
 
 * `double GetMeasurementUncertainty(double)`
-Explanation. This method is usefull for the detector current only!
+The measurement uncertainty as specified by the manufacturer for a valid calibrated instrument is returned. The measurement range is estimated as  before. This method is usefull for the detector current only!
 
 * `double GetMeasurementUncertainty(double, MeasurementRange)`
-Explanation. This method is usefull for the detector current only!
-
-* `string Query(string)`
-This is a low level, yet powerful method to communicate with the instrument. Will be made private in future releases of the library!
+Same as above for a fixed measurement range. This method is usefull for the detector current only!
  
 ### Properties
+
+All properties are getters only.
 
 * `InstrumentManufacturer`
 Returns the string "Gigahertz-Optik".
@@ -48,24 +47,23 @@ Returns a string of the instrument designation.
 Returns the unique serial number of the instrument as a string. Usually this number is different from the serial number printed on the instrument case.
 
 * `InstrumentFirmwareVersion`
-Explanation.
+Returns a string for the firmware version.
 
 * `InstrumentID`
-Returns a combination of the previous properties which unambiguous identifies the instrument (hopefully).
+Returns a combination of the previous properties which unambiguously identifies the instrument (hopefully).
 
 * `DevicePort`
-The port as passed to the constructor.
+The port name as passed to the constructor.
 
 * `DetectorID`
-Returns a string identifing the connected detector head.
+Returns a string identifing the detector head connected.
 
 * `PhotometricUnit`
-Returns the symbol of the measurement unit. This unit is used for the value returned by `GetPhotometricValue()`. Error-prone! This method will be removed in future releases!
+Returns the symbol of the measurement unit. This unit is used for the value returned by `GetPhotometricValue()`. Error-prone! Might be depricated in future releases!
 
 ## Notes
 
-All properties are getters only.
-
 Once instantiated, it is not possible to modify the object's `DevicePort`. However swaping  instruments on the same port can work. Properties like `InstrumentID` will reflect the actual instrument.
 
+With the low level, yet powerful method `string Query(string)` one can gain full control over the instrument. It is declared private in this library to restrict potential danger. If you are brave you can declare it public.
 
