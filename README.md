@@ -67,3 +67,5 @@ Returns the symbol of the measurement unit. This unit is used for the value retu
 All properties are getters only.
 
 Once instantiated, it is not possible to modify the object's `DevicePort`. However swaping  instruments on the same port can work. Properties like `InstrumentID` will reflect the actual instrument.
+
+
