@@ -15,14 +15,16 @@ namespace Bev.Instruments.P9710
             SelectAutorange();
         }
 
+        public string DevicePort { get; }
         public string InstrumentManufacturer => "Gigahertz-Optik";
         public string InstrumentType => $"{ParseSoftwareVersion()[0]}-{GetDeviceVariant()}";
         public string InstrumentSerialNumber => GetDeviceSerialNumber();
         public string InstrumentFirmwareVersion => ParseSoftwareVersion()[1];
         public string InstrumentID => $"{InstrumentType} {InstrumentFirmwareVersion} SN:{InstrumentSerialNumber} @ {DevicePort}";
-        public double InstrumentBattery => GetBatteryLevel();
-        public string DevicePort { get; }
+        public double InstrumentBatteryLevel => GetBatteryLevel();
+
         public string DetectorID => GetDetectorID();
+        public double DetectorCalibrationFactor => GetCalibrationFactor();
         public string PhotometricUnit => Query("GU");
 
         public double GetDetectorCurrent()
@@ -202,6 +204,16 @@ namespace Bev.Instruments.P9710
             string answer = Query("MB");
             if (double.TryParse(answer, NumberStyles.Any, CultureInfo.InvariantCulture, out battery))
                 return battery;
+            else
+                return double.NaN;
+        }
+
+        private double GetCalibrationFactor()
+        {
+            double factor;
+            string answer = Query("GS4");
+            if (double.TryParse(answer, NumberStyles.Any, CultureInfo.InvariantCulture, out factor))
+                return factor;
             else
                 return double.NaN;
         }
