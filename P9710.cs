@@ -29,9 +29,8 @@ namespace Bev.Instruments.P9710
 
         public double GetDetectorCurrent()
         {
-            double current;
             string answer = Query("MA");
-            if (double.TryParse(answer, NumberStyles.Any, CultureInfo.InvariantCulture, out current))
+            if (double.TryParse(answer, NumberStyles.Any, CultureInfo.InvariantCulture, out double current))
                 return current;
             else
                 return double.NaN;
@@ -39,9 +38,8 @@ namespace Bev.Instruments.P9710
 
         public double GetPhotometricValue()
         {
-            double illuminance;
             string answer = Query("MV");
-            if (Double.TryParse(answer, NumberStyles.Any, CultureInfo.InvariantCulture, out illuminance))
+            if (Double.TryParse(answer, NumberStyles.Any, CultureInfo.InvariantCulture, out double illuminance))
                 return illuminance;
             else
                 return double.NaN;
@@ -200,9 +198,8 @@ namespace Bev.Instruments.P9710
 
         private double GetBatteryLevel()
         {
-            double battery;
             string answer = Query("MB");
-            if (double.TryParse(answer, NumberStyles.Any, CultureInfo.InvariantCulture, out battery))
+            if (double.TryParse(answer, NumberStyles.Any, CultureInfo.InvariantCulture, out double battery))
                 return battery;
             else
                 return double.NaN;
@@ -210,9 +207,8 @@ namespace Bev.Instruments.P9710
 
         private double GetCalibrationFactor()
         {
-            double factor;
             string answer = Query("GS4");
-            if (double.TryParse(answer, NumberStyles.Any, CultureInfo.InvariantCulture, out factor))
+            if (double.TryParse(answer, NumberStyles.Any, CultureInfo.InvariantCulture, out double factor))
                 return factor;
             else
                 return double.NaN;

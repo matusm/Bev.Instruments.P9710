@@ -6,7 +6,7 @@ A lightweight C# library for controlling the optometer P-9710 via the serial bus
 
 The high quality portable optometer P-9710 by [Gigahertz-Optik GmbH](https://www.gigahertz-optik.com/) is basically a photo-current meter with high dynamic range. It can be controlled via its RS232 interface.
 
-The API of this library allows to read the actual photo current of the instrument. When a calibrated detector head is used on can also read the corresponding radiometric/photometric quantity. The RS232 interface allowes full controll including internal adjustments and parameter modifications of the instrument. However this library is purposefully designed to restrict any possibilities to modify instrument settings. There is a single exception: the instrument is set to auto-range mode.
+The API of this library allows to read the actual photo current of the instrument. When a calibrated detector head is used one can also read the corresponding radiometric/photometric quantity. The RS232 interface allowes full controll including internal adjustments and parameter modifications of the instrument. However this library is purposefully designed to restrict any possibilities to modify instrument settings. There is a single exception: the instrument is set to auto-range mode.
 ## Constructor
 
 The library is composed of a single class. The constructor `P9710(string)` creates a new instance of this class taking a string as the single argument. The string is interpreted as the port name of the serial port. Typical examples are `COM1` or `/dev/cu.usbmodem2`. The instrument is set to autorange mode. This is the only persistant setting caused by the use of this library.
