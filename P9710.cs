@@ -232,7 +232,7 @@ namespace Bev.Instruments.P9710
         Range4, // 200 nA
         Range5, //  20 nA
         Range6, //   2 nA
-        Range7  // 200 pA
+        Range7  // 200 pA (this range seems to be not implemented in our instruments)
     }
 
 }
