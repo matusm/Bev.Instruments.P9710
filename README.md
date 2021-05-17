@@ -51,6 +51,9 @@ Returns a string for the firmware version.
 * `InstrumentID`
 Returns a combination of the previous properties which unambiguously identifies the instrument (hopefully).
 
+* `InstrumentBatteryLevel`
+Returns the percentage of the actual battery capacity. Always 100 with plug-in power supply connected.
+
 * `DevicePort`
 The port name as passed to the constructor.
 
@@ -60,9 +63,44 @@ Returns a string identifing the detector head connected.
 * `PhotometricUnit`
 Returns the symbol of the measurement unit. This unit is used for the value returned by `GetPhotometricValue()`. Error-prone! Might be depricated in future releases!
 
+* `DetectorCalibrationFactor`
+Returns calibration factor for the detector head used. Error-prone! Might be depricated in future releases!
+
 ## Notes
 
 Once instantiated, it is not possible to modify the object's `DevicePort`. However swaping  instruments on the same port can work. Properties like `InstrumentID` will reflect the actual instrument.
 
 With the low level, yet powerful method `string Query(string)` one can gain full control over the instrument. It is declared private in this library to restrict potential danger. You can declare it public if you are brave enough.
 
+## Usage
+
+The following code fragment of a simple program shows the use of this class.
+
+
+```cs
+using Bev.Instruments.P9710;
+using System;
+
+namespace PhotoPlayground
+{
+    class MainClass
+    {
+        public static void Main(string[] args)
+        {
+            var optometer = new P9710("COM1");
+
+            Console.WriteLine($"Instrument: {optometer.InstrumentID}");
+            Console.WriteLine($"Detector:   {optometer.DetectorID}");
+            Console.WriteLine($"CalFactor:  {optometer.DetectorCalibrationFactor} A/{optometer.PhotometricUnit}"); 
+            Console.WriteLine($"Battery:    {optometer.InstrumentBatteryLevel} %");
+            Console.WriteLine();
+            
+            for (int i = 0; i < 10; i++)
+            {
+                double current = optometer.GetDetectorCurrent();
+                Console.WriteLine($"{i,3} : {current} A   (Measurement range: {optometer.GetMeasurementRange()})");
+            }
+        }
+    }
+}
+```
