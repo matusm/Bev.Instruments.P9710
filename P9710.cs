@@ -7,6 +7,7 @@ namespace Bev.Instruments.P9710
 {
     public class P9710
     {
+
         public P9710(string portName)
         {
             comPort = new SerialPort(portName, 9600);
@@ -102,46 +103,46 @@ namespace Bev.Instruments.P9710
 
         public double GetMeasurementUncertainty(double current, MeasurementRange range)
         {
-            double error = 0;
+            double errorInterval = 0;
             current = Math.Abs(current);
             switch (range)
             {
                 case MeasurementRange.Unknown:
-                    error = double.NaN;
+                    errorInterval = double.NaN;
                     break;
                 case MeasurementRange.Range0:
-                    error = 0.002 * current + 1.0E-6;
+                    errorInterval = 0.002 * current + 1.0E-6;
                     break;
                 case MeasurementRange.Range1:
-                    error = 0.002 * current + 1.0E-7;
+                    errorInterval = 0.002 * current + 1.0E-7;
                     break;
                 case MeasurementRange.Range2:
-                    error = 0.002 * current + 1.0E-8;
+                    errorInterval = 0.002 * current + 1.0E-8;
                     break;
                 case MeasurementRange.Range3:
-                    error = 0.002 * current + 1.0E-9;
+                    errorInterval = 0.002 * current + 1.0E-9;
                     break;
                 case MeasurementRange.Range4:
-                    error = 0.002 * current + 1.0E-10;
+                    errorInterval = 0.002 * current + 1.0E-10;
                     break;
                 case MeasurementRange.Range5:
-                    error = 0.002 * current + 1.0E-11;
+                    errorInterval = 0.002 * current + 1.0E-11;
                     break;
                 case MeasurementRange.Range6:
-                    error = 0.005 * current + 2.0E-12;
+                    errorInterval = 0.005 * current + 2.0E-12;
                     break;
                 case MeasurementRange.Range7:
-                    error = 0.005 * current + 2.0E-12;
+                    errorInterval = 0.005 * current + 2.0E-12;
                     break;
                 default:
                     break;
             }
             // divide by Sqrt(3) for standard uncertainty
-            return error * 0.57735;
+            return errorInterval * 0.57735;
         }
 
-        // TODO make private to avoid unintended re-setting of the instrument
-        public string Query(string command)
+        // By making this method public one can get full controll over the instrument
+        private string Query(string command)
         {
             if (!comPort.IsOpen) comPort.Open();
             comPort.WriteLine(command);
@@ -189,8 +190,7 @@ namespace Bev.Instruments.P9710
             for (int i = 0; i < 6; i++)
             {
                 string s = Query($"GC{i}");
-                int answ = 0;
-                Int32.TryParse(s, out answ);
+                int.TryParse(s, out int answ);
                 id += $"{Convert.ToChar(answ)}";
             }
             return id;
@@ -217,7 +217,7 @@ namespace Bev.Instruments.P9710
         // The best practice for any application is to wait for some amount of time
         // after calling the Close method before attempting to call the Open method,
         // as the port may not be closed instantly.
-        // No amount is given! one has to experiment with this value
+        // No actual value is given! One has to experiment with this value
         private const int delayOnClose = 100;
 
     }
