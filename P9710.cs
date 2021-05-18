@@ -16,6 +16,7 @@ namespace Bev.Instruments.P9710
         }
 
         public string DevicePort { get; }
+
         public string InstrumentManufacturer => "Gigahertz-Optik";
         public string InstrumentType => $"{ParseSoftwareVersion()[0]}-{GetDeviceVariant()}";
         public string InstrumentSerialNumber => GetDeviceSerialNumber();
@@ -141,12 +142,12 @@ namespace Bev.Instruments.P9710
             return errorInterval * 0.57735;
         }
 
-        // By making this method public one can get full controll over the instrument
+        // By making this method public one can access full controll over the instrument
         private string Query(string command)
         {
+            string answer = "???"; 
             if (!comPort.IsOpen) comPort.Open();
             comPort.WriteLine(command);
-            string answer = "***";
             try
             {
                 answer = comPort.ReadLine();
