@@ -30,20 +30,12 @@ namespace Bev.Instruments.P9710
 
         public double GetDetectorCurrent()
         {
-            string answer = Query("MA");
-            if (double.TryParse(answer, NumberStyles.Any, CultureInfo.InvariantCulture, out double current))
-                return current;
-            else
-                return double.NaN;
+            return ParseDoubleFrom(Query("MA"));
         }
 
         public double GetPhotometricValue()
         {
-            string answer = Query("MV");
-            if (Double.TryParse(answer, NumberStyles.Any, CultureInfo.InvariantCulture, out double illuminance))
-                return illuminance;
-            else
-                return double.NaN;
+            return ParseDoubleFrom(Query("MV"));
         }
 
         public MeasurementRange GetMeasurementRange()
@@ -199,25 +191,25 @@ namespace Bev.Instruments.P9710
 
         private double GetBatteryLevel()
         {
-            string answer = Query("MB");
-            if (double.TryParse(answer, NumberStyles.Any, CultureInfo.InvariantCulture, out double battery))
-                return battery;
-            else
-                return double.NaN;
+            return ParseDoubleFrom(Query("MB"));
         }
 
         private double GetCalibrationFactor()
         {
-            string answer = Query("GS4");
-            if (double.TryParse(answer, NumberStyles.Any, CultureInfo.InvariantCulture, out double factor))
-                return factor;
-            else
-                return double.NaN;
+            return ParseDoubleFrom(Query("GS4"));
         }
 
         private void SelectAutorange()
         {
             Query("SB1");
+        }
+
+        private double ParseDoubleFrom(string s)
+        {
+            if (double.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out double numericValue))
+                return numericValue;
+            else
+                return double.NaN;
         }
 
         private static SerialPort comPort;
