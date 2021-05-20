@@ -149,7 +149,7 @@ namespace Bev.Instruments.P9710
                 // just do nothing
             }
             if (comPort.IsOpen) comPort.Close();
-            Thread.Sleep(delayOnClose);
+            Thread.Sleep(waitOnClose);
             return answer;
         }
 
@@ -219,7 +219,7 @@ namespace Bev.Instruments.P9710
         // after calling the Close method before attempting to call the Open method,
         // as the port may not be closed instantly.
         // No actual value is given! One has to experiment with this value
-        private const int delayOnClose = 100;
+        private const int waitOnClose = 100;
 
     }
 
