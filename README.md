@@ -18,20 +18,20 @@ The library is composed of a single class. The constructor `P9710(string)` creat
 Gets the photo current in Ampere. This is the prefered way to query the instrument. On errors `double.NaN` is returned.
  
 * `double GetPhotometricValue()`
-Gets the radiometric/photometric quantity for the connected radiometer head. Internally this value is just the photo current multiplied by a calibration factor. This factor is stored in the head's connector and transfered to the optometer on power-on. On errors `double.NaN` is returned.
+Gets the radiometric/photometric quantity for the connected radiometer head. Internally this value is just the photo current divided by a calibration factor. This factor is stored in the head's connector. On errors `double.NaN` is returned.
 Error-prone! Might be depricated in future releases!
  
 * `MeasurementRange GetMeasurementRange()`
-Gets the actual measurement range (for detector current). The possible ranges are defined in the manual. The returned range is valid only for the very moment of the call. A previous or subsequent call to `GetDetectorCurrent()` may be performed in a differen range. This is the consequence of the auto-range functionality. This method is usefull for the detector current only!
+Gets the actual measurement range (for photo current) by querying the instrument. The possible ranges are defined in the manual and coded in an enum. The returned range is valid only for the very moment of the call. As a consequence of the auto-range functionality, previous or subsequent calls to `GetDetectorCurrent()` might be performed in a different range. This method is usefull for the photo current only!
 
 * `MeasurementRange EstimateMeasurementRange(double)`
-The measurement range is estimated from a current value passed to the method. No comunication with the instrument is initiated during the call. If the instrument is in fixed range mode, the returned range might be wrong. This method is usefull for the detector current only!
+The measurement range is estimated from a current value passed to the method. No communication with the instrument is initiated during the call. If the instrument is in fixed range mode, the returned value might be wrong. This method is usefull for the photo current only!
 
 * `double GetMeasurementUncertainty(double)`
-The measurement uncertainty as specified by the manufacturer for a valid calibrated instrument is returned. The measurement range is estimated as  before. This method is usefull for the detector current only!
+The measurement uncertainty as specified by the manufacturer is returned. The measurement range is estimated as before. This method is usefull for the photo current only!
 
 * `double GetMeasurementUncertainty(double, MeasurementRange)`
-Same as above for a fixed measurement range. This method is usefull for the detector current only!
+Same as above for a fixed measurement range. This method is usefull for the photo current only!
  
 ### Properties
 
