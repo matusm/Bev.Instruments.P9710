@@ -6,26 +6,28 @@ A lightweight C# library for controlling the optometer P-9710 via the serial bus
 
 The high quality portable optometer P-9710 by [Gigahertz-Optik GmbH](https://www.gigahertz-optik.com/) is basically a photo-current meter with high dynamic range. It can be controlled via its RS232 interface.
 
-The API of this library allows to read the actual photo current of the instrument. When a calibrated detector head is used one can also read the corresponding radiometric/photometric quantity. The RS232 interface allowes full controll including internal adjustments and parameter modifications of the instrument. However this library is purposefully designed to restrict any possibilities to modify instrument settings. There is a single exception: the instrument is set to auto-range mode.
+The API of this library allows to identify and to read the actual photo current of the instrument. On using a calibrated detector head, one can also read the corresponding radiometric/photometric quantity. The RS232 interface allowes full control including internal adjustments and persistant parameter modifications of the instrument. However this library is purposefully designed to restrict any possibilities to modify instrument settings (with the exception of range setting).
 
-## Constructor
+### Constructor
 
-The library is composed of a single class. The constructor `P9710(string)` creates a new instance of this class taking a string as the single argument. The string is interpreted as the port name of the serial port. Typical examples are `COM1` or `/dev/tty.usbserial-FTY594BQ`. The instrument is set to autorange mode. This is the only persistant setting caused by the use of this library.
+The library is composed of a single class. The constructor `P9710(string)` creates a new instance of this class taking a string as the single argument. The string is interpreted as the port name of the serial port. Typical examples are `COM1` or `/dev/tty.usbserial-FTY594BQ`. The instrument is set to autorange mode which is the only persistant setting caused by the use of this library.
 
 ### Methods
 
 * `double GetDetectorCurrent()`
-Gets the photo current in Ampere. This is the prefered way to query the instrument. On errors `double.NaN` is returned.
+Gets the photo current in Ampere. The prefered way to query the instrument. On errors `double.NaN` is returned.
  
 * `double GetPhotometricValue()`
-Gets the radiometric/photometric quantity for the connected radiometer head. Internally this value is just the photo current divided by a calibration factor. This factor is stored in the head's connector. On errors `double.NaN` is returned.
-Error-prone! Might be depricated in future releases!
+Gets the radiometric/photometric quantity for the connected radiometer head. Internally this value is just the photo current divided by a calibration factor stored in the head's connector. On errors `double.NaN` is returned.
+Danger of confusion - might be depricated in future releases!
  
 * `MeasurementRange GetMeasurementRange()`
-Gets the actual measurement range (for photo current) by querying the instrument. The possible ranges are defined in the manual and coded in an enum. The returned range is valid only for the very moment of the call. As a consequence of the auto-range functionality, previous or subsequent calls to `GetDetectorCurrent()` might be performed in a different range. This method is usefull for the photo current only!
+Gets the actual measurement range (for photo current) by querying the instrument. The possible ranges are defined in the manual and coded in an `enum`. The returned range is valid only for the very moment of the call. As a consequence of the auto-range functionality, previous or subsequent calls to `GetDetectorCurrent()` might be performed in a different range. This method is usefull for the photo current only!
+
+The methods below are purely numeric and can be used without instrument connected. No communication with the instrument is initiated during the calls.
 
 * `MeasurementRange EstimateMeasurementRange(double)`
-The measurement range is estimated from a current value passed to the method. No communication with the instrument is initiated during the call. If the instrument is in fixed range mode, the returned value might be wrong. This method is usefull for the photo current only!
+The measurement range is estimated from a current value passed to the method. If the instrument is in fixed range mode, the returned value might be incorrect. This method is usefull for the photo current only!
 
 * `double GetMeasurementUncertainty(double)`
 The measurement uncertainty as specified by the manufacturer is returned. The measurement range is estimated as before. This method is usefull for the photo current only!
@@ -55,28 +57,27 @@ Returns a combination of the previous properties which unambiguously identifies 
 * `InstrumentBatteryLevel`
 Returns the percentage of the actual battery capacity. Always 100 with plug-in power supply connected.
 
-* `DevicePort`
-The port name as passed to the constructor.
-
 * `DetectorID`
 Returns a string identifing the detector head connected.
 
 * `PhotometricUnit`
-Returns the symbol of the measurement unit. This unit is used for the value returned by `GetPhotometricValue()`. Error-prone! Might be depricated in future releases!
+Returns the symbol of the measurement unit. This unit is used for the value returned by `GetPhotometricValue()`. Danger of confusion - might be depricated in future releases!
 
 * `DetectorCalibrationFactor`
-Returns calibration factor for the detector head used. Error-prone! Might be depricated in future releases!
+Returns calibration factor for the detector head used. Danger of confusion - might be depricated in future releases!
+
+* `DevicePort`
+The port name as passed to the constructor.
 
 ## Notes
 
-Once instantiated, it is not possible to modify the object's `DevicePort`. However swaping  instruments on the same port can work. Properties like `InstrumentID` will reflect the actual instrument.
+Once instantiated, it is not possible to modify the object's `DevicePort`. However swaping  instruments on the same port may work. Properties like `InstrumentID` etc. will reflect the actual instrument.
 
-With the low level, yet powerful method `string Query(string)` one can gain full control over the instrument. It is declared private in this library to restrict potential danger. You can declare it public if you are brave enough.
+With the low level, yet powerful method `string Query(string)`, one can gain full control over the instrument. It is declared private in this library to restrict potential danger. You can declare it public if you are brave enough.
 
 ## Usage
 
-The following code fragment of a simple program shows the use of this class.
-
+The following code fragment demonstrate the use of this class.
 
 ```cs
 using Bev.Instruments.P9710;
@@ -99,7 +100,7 @@ namespace PhotoPlayground
             for (int i = 0; i < 10; i++)
             {
                 double current = optometer.GetDetectorCurrent();
-                Console.WriteLine($"{i,3} : {current} A   (Measurement range: {optometer.GetMeasurementRange()})");
+                Console.WriteLine($"{i,3} : {current} A  -  (Measurement range: {optometer.GetMeasurementRange()})");
             }
         }
     }
