@@ -10,8 +10,8 @@ namespace Bev.Instruments.P9710
 
         public P9710(string portName)
         {
-            comPort = new SerialPort(portName, 9600);
-            DevicePort = portName;
+            DevicePort = portName.Trim();
+            comPort = new SerialPort(DevicePort, 9600);
             SelectAutorange();
         }
 
