@@ -137,20 +137,45 @@ namespace Bev.Instruments.P9710
         // By making this method public one can access full controll over the instrument
         private string Query(string command)
         {
-            string answer = "???"; 
-            if (!comPort.IsOpen) comPort.Open();
-            comPort.WriteLine(command);
+            string answer = "???";
+            OpenPort();
             try
             {
+                comPort.WriteLine(command);
                 answer = comPort.ReadLine();
             }
             catch (Exception)
             {
                 // just do nothing
             }
-            if (comPort.IsOpen) comPort.Close();
+            ClosePort();
             Thread.Sleep(waitOnClose);
             return answer;
+        }
+
+        private void OpenPort()
+        {
+            try
+            {
+                if (!comPort.IsOpen)
+                    comPort.Open();
+            }
+            catch (Exception)
+            { }
+        }
+
+        private void ClosePort()
+        {
+            try
+            {
+                if (comPort.IsOpen)
+                {
+                    comPort.Close();
+                    Thread.Sleep(waitOnClose);
+                }
+            }
+            catch (Exception)
+            { }
         }
 
         private string[] ParseSoftwareVersion()
