@@ -237,7 +237,7 @@ namespace Bev.Instruments.P9710
                 return double.NaN;
         }
 
-        private static SerialPort comPort;
+        private readonly SerialPort comPort;
 
         // https://docs.microsoft.com/en-us/dotnet/api/system.io.ports.serialport.close?view=dotnet-plat-ext-5.0
         // The best practice for any application is to wait for some amount of time
