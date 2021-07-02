@@ -45,28 +45,28 @@ namespace Bev.Instruments.P9710
             switch (rangeString)
             {
                 case "0":
-                    range = MeasurementRange.Range0;
+                    range = MeasurementRange.Range03;
                     break;
                 case "1":
-                    range = MeasurementRange.Range1;
+                    range = MeasurementRange.Range04;
                     break;
                 case "2":
-                    range = MeasurementRange.Range2;
+                    range = MeasurementRange.Range05;
                     break;
                 case "3":
-                    range = MeasurementRange.Range3;
+                    range = MeasurementRange.Range06;
                     break;
                 case "4":
-                    range = MeasurementRange.Range4;
+                    range = MeasurementRange.Range07;
                     break;
                 case "5":
-                    range = MeasurementRange.Range5;
+                    range = MeasurementRange.Range08;
                     break;
                 case "6":
-                    range = MeasurementRange.Range6;
+                    range = MeasurementRange.Range09;
                     break;
                 case "7":
-                    range = MeasurementRange.Range7;
+                    range = MeasurementRange.Range10;
                     break;
                 default:
                     break;
@@ -78,14 +78,15 @@ namespace Bev.Instruments.P9710
         {
             if (double.IsNaN(current)) return MeasurementRange.Unknown;
             current = Math.Abs(current);
-            if (current > 2.0E-4) return MeasurementRange.Range0;
-            if (current > 2.0E-5) return MeasurementRange.Range1;
-            if (current > 2.0E-6) return MeasurementRange.Range2;
-            if (current > 2.0E-7) return MeasurementRange.Range3;
-            if (current > 2.0E-8) return MeasurementRange.Range4;
-            if (current > 2.0E-9) return MeasurementRange.Range5;
-            if (current > 2.0E-10) return MeasurementRange.Range6;
-            return MeasurementRange.Range7;
+            if (current > 1.999E-3) return MeasurementRange.RangeOverflow;
+            if (current > 1.999E-4) return MeasurementRange.Range03;
+            if (current > 1.999E-5) return MeasurementRange.Range04;
+            if (current > 1.999E-6) return MeasurementRange.Range05;
+            if (current > 1.999E-7) return MeasurementRange.Range06;
+            if (current > 1.999E-8) return MeasurementRange.Range07;
+            if (current > 1.999E-9) return MeasurementRange.Range08;
+            if (current > 1.999E-10) return MeasurementRange.Range09;
+            return MeasurementRange.Range10;
         }
 
         public double GetMeasurementUncertainty(double current)
@@ -101,37 +102,38 @@ namespace Bev.Instruments.P9710
             switch (range)
             {
                 case MeasurementRange.Unknown:
+                case MeasurementRange.RangeOverflow:
                     errorInterval = double.NaN;
                     break;
-                case MeasurementRange.Range0:
+                case MeasurementRange.Range03:
                     errorInterval = 0.002 * current + 1.0E-6;
                     break;
-                case MeasurementRange.Range1:
+                case MeasurementRange.Range04:
                     errorInterval = 0.002 * current + 1.0E-7;
                     break;
-                case MeasurementRange.Range2:
+                case MeasurementRange.Range05:
                     errorInterval = 0.002 * current + 1.0E-8;
                     break;
-                case MeasurementRange.Range3:
+                case MeasurementRange.Range06:
                     errorInterval = 0.002 * current + 1.0E-9;
                     break;
-                case MeasurementRange.Range4:
+                case MeasurementRange.Range07:
                     errorInterval = 0.002 * current + 1.0E-10;
                     break;
-                case MeasurementRange.Range5:
+                case MeasurementRange.Range08:
                     errorInterval = 0.002 * current + 1.0E-11;
                     break;
-                case MeasurementRange.Range6:
+                case MeasurementRange.Range09:
                     errorInterval = 0.005 * current + 2.0E-12;
                     break;
-                case MeasurementRange.Range7:
+                case MeasurementRange.Range10:
                     errorInterval = 0.005 * current + 2.0E-12;
                     break;
                 default:
                     break;
             }
             // divide by Sqrt(3) for standard uncertainty
-            return errorInterval * 0.57735;
+            return errorInterval * 0.577350269;
         }
 
         // By making this method public one can access full controll over the instrument
@@ -251,14 +253,15 @@ namespace Bev.Instruments.P9710
     public enum MeasurementRange
     {
         Unknown,
-        Range0, //   2 mA
-        Range1, // 200 uA
-        Range2, //  20 uA
-        Range3, //   2 uA
-        Range4, // 200 nA
-        Range5, //  20 nA
-        Range6, //   2 nA
-        Range7  // 200 pA (this range seems to be not implemented in our instruments)
+        RangeOverflow, // >1.999 mA
+        Range03, // 1.999 mA -  0.200 mA
+        Range04, // 199.9 uA -   20.0 uA
+        Range05, // 19.99 uA -   2.00 uA
+        Range06, // 1.999 uA -  0.200 uA
+        Range07, // 199.9 nA -   20.0 nA
+        Range08, // 19.99 nA -   2.00 nA
+        Range09, // 1.999 nA -  0.200 nA
+        Range10  // 199.9 pA -  000.0 pA (this range seems to be not implemented in our instruments)
     }
 
 }
