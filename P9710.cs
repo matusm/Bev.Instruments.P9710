@@ -140,7 +140,7 @@ namespace Bev.Instruments.P9710
         }
 
         // By making this method public one can access full controll over the instrument
-        private string Query(string command)
+        public string Query(string command)
         {
             string answer = "???";
             OpenPort();
