@@ -8,6 +8,8 @@ namespace Bev.Instruments.P9710
 {
     public class P9710
     {
+        private readonly SerialPort comPort;
+        private const int waitOnClose = 100;
 
         public P9710(string portName)
         {
@@ -255,14 +257,7 @@ namespace Bev.Instruments.P9710
                 return double.NaN;
         }
 
-        private readonly SerialPort comPort;
 
-        // https://docs.microsoft.com/en-us/dotnet/api/system.io.ports.serialport.close?view=dotnet-plat-ext-5.0
-        // The best practice for any application is to wait for some amount of time
-        // after calling the Close method before attempting to call the Open method,
-        // as the port may not be closed instantly.
-        // No actual value is given! One has to experiment with this value
-        private const int waitOnClose = 100;
 
     }
 
