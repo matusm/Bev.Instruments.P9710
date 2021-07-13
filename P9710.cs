@@ -2,6 +2,7 @@
 using System.IO.Ports;
 using System.Threading;
 using System.Globalization;
+using System.Text;
 
 namespace Bev.Instruments.P9710
 {
@@ -207,12 +208,27 @@ namespace Bev.Instruments.P9710
             string id = Query("GK");
             if (string.IsNullOrWhiteSpace(id))
                 return "";
+            // Check if the magic string "PT9610" is present
+            string magicString = "";
             for (int i = 0; i < 6; i++)
             {
                 string s = Query($"GC{i}");
                 int.TryParse(s, out int answ);
-                id += $"{Convert.ToChar(answ)}";
+                magicString += $"{Convert.ToChar(answ)}";
             }
+            if (magicString != "PT9610")
+                return "";
+            string secretString = "";
+            for (int i = 0x10; i < 0x20; i++)
+            {
+                string s = Query($"GC{i}");
+                int.TryParse(s, out int answ);
+                secretString += $"{Convert.ToChar(answ)}";
+            }
+            int lowByte = int.Parse(Query("GC6"));
+            int highByte = int.Parse(Query("GC7"));
+            int sn = highByte * 256 + lowByte;
+            id += $" SN:{sn} ({secretString.Trim()})";
             return id;
         }
 
