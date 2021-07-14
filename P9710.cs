@@ -259,18 +259,18 @@ namespace Bev.Instruments.P9710
 
         /*************************************************/
 
-        private void WriteSecretString(string stringToWrite)
+        public void WriteSecretString(string stringToWrite)
         {
             string truncated = stringToWrite.Substring(0, Math.Min(stringToWrite.Length, 16));
             WriteStringToDetectorData(truncated, 16);
         }
 
-        private void WriteMagicString()
+        public void WriteMagicString()
         {
             WriteStringToDetectorData("PT9610", 0);
         }
 
-        private void WriteStringToDetectorData(string stringToWrite, int pointer)
+        public void WriteStringToDetectorData(string stringToWrite, int pointer)
         {
             if (string.IsNullOrWhiteSpace(stringToWrite))
                 return;
@@ -278,7 +278,7 @@ namespace Bev.Instruments.P9710
             WriteBytesToDetectorData(bytes, pointer);
         }
 
-        private void WriteBytesToDetectorData(byte[] bytes, int pointer)
+        public void WriteBytesToDetectorData(byte[] bytes, int pointer)
         {
             if (pointer < 0)
                 return;
