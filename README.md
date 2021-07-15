@@ -14,7 +14,7 @@ The library is composed of a single class. The constructor `P9710(string)` creat
 
 ### Methods
 
-* `double GetDetectorCurrent()`
+* `double GetCurrent()`
 Gets the photo current in Ampere. The prefered way to query the instrument. On errors `double.NaN` is returned.
  
 * `double GetPhotometricValue()`
@@ -22,7 +22,7 @@ Gets the radiometric/photometric quantity for the connected radiometer head. Int
 Danger of confusion - might be depricated in future releases!
  
 * `MeasurementRange GetMeasurementRange()`
-Gets the actual measurement range (for photo current) by querying the instrument. The possible ranges are defined in the manual and coded in an `enum`. The returned range is valid only for the very moment of the call. As a consequence of the auto-range functionality, previous or subsequent calls to `GetDetectorCurrent()` might be performed in a different range. This method is usefull for the photo current only!
+Gets the actual measurement range (for photo current) by querying the instrument. The possible ranges are defined in the manual and coded in an `enum`. The returned range is valid only for the very moment of the call. As a consequence of the auto-range functionality, previous or subsequent calls to `GetCurrent()` might be performed in a different range. This method is usefull for the photo current only!
 
 The methods below are purely numeric and can be used without instrument connected. No communication with the instrument is initiated during the calls.
 
@@ -60,7 +60,7 @@ Returns the percentage of the actual battery capacity. Always 100 with plug-in p
 * `DetectorID`
 Returns a string identifing the detector head connected.
 
-* `PhotometricUnit`
+* `DetectorPhotometricUnit`
 Returns the symbol of the measurement unit. This unit is used for the value returned by `GetPhotometricValue()`. Danger of confusion - might be depricated in future releases!
 
 * `DetectorCalibrationFactor`
@@ -93,13 +93,13 @@ namespace PhotoPlayground
 
             Console.WriteLine($"Instrument: {optometer.InstrumentID}");
             Console.WriteLine($"Detector:   {optometer.DetectorID}");
-            Console.WriteLine($"CalFactor:  {optometer.DetectorCalibrationFactor} A/{optometer.PhotometricUnit}"); 
+            Console.WriteLine($"CalFactor:  {optometer.DetectorCalibrationFactor} A/{optometer.DetectorPhotometricUnit}"); 
             Console.WriteLine($"Battery:    {optometer.InstrumentBatteryLevel} %");
             Console.WriteLine();
             
             for (int i = 0; i < 10; i++)
             {
-                double current = optometer.GetDetectorCurrent();
+                double current = optometer.GetCurrent();
                 Console.WriteLine($"{i,3} : {current} A  -  (Measurement range: {optometer.GetMeasurementRange()})");
             }
         }
