@@ -140,7 +140,7 @@ namespace Bev.Instruments.P9710
         }
 
         // By making this method public one can access full controll over the instrument
-        public string Query(string command)
+        private string Query(string command)
         {
             string answer = "???";
             OpenPort();
@@ -255,44 +255,6 @@ namespace Bev.Instruments.P9710
                 return numericValue;
             else
                 return double.NaN;
-        }
-
-        /*************************************************/
-
-        public void WriteSecretString(string stringToWrite)
-        {
-            string truncated = stringToWrite.Substring(0, Math.Min(stringToWrite.Length, 16));
-            WriteStringToDetectorData(truncated, 16);
-        }
-
-        public void WriteMagicString()
-        {
-            WriteStringToDetectorData("PT9610", 0);
-        }
-
-        public void WriteStringToDetectorData(string stringToWrite, int pointer)
-        {
-            if (string.IsNullOrWhiteSpace(stringToWrite))
-                return;
-            byte[] bytes = Encoding.ASCII.GetBytes(stringToWrite);
-            WriteBytesToDetectorData(bytes, pointer);
-        }
-
-        public void WriteBytesToDetectorData(byte[] bytes, int pointer)
-        {
-            if (pointer < 0)
-                return;
-            if (pointer > 0x800)
-                return;
-            if (bytes == null)
-                return;
-            if (bytes.Length == 0)
-                return;
-            Query($"SP{pointer}");
-            for (int i = 0; i < bytes.Length; i++)
-            {
-                Query($"SC{bytes[i]}");
-            }
         }
 
     }
