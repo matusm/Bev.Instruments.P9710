@@ -29,9 +29,9 @@ namespace Bev.Instruments.P9710
 
         public string DetectorID => GetDetectorID();
         public double DetectorCalibrationFactor => GetCalibrationFactor();
-        public string PhotometricUnit => Query("GU");
+        public string DetectorPhotometricUnit => Query("GU");
 
-        public double GetDetectorCurrent()
+        public double GetCurrent()
         {
             return ParseDoubleFrom(Query("MA"));
         }
