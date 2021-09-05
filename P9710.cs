@@ -1,15 +1,14 @@
 ﻿using System;
+using System.Globalization;
 using System.IO.Ports;
 using System.Threading;
-using System.Globalization;
-using System.Text;
 
 namespace Bev.Instruments.P9710
 {
     public class P9710
     {
-        private readonly SerialPort comPort;
-        private const int waitOnClose = 100;
+        protected readonly SerialPort comPort;
+        protected const int waitOnClose = 100;
 
         public P9710(string portName)
         {
@@ -140,7 +139,7 @@ namespace Bev.Instruments.P9710
         }
 
         // By making this method public one can access full controll over the instrument
-        private string Query(string command)
+        protected string Query(string command)
         {
             string answer = "???";
             OpenPort();
@@ -158,7 +157,7 @@ namespace Bev.Instruments.P9710
             return answer;
         }
 
-        private void OpenPort()
+        protected void OpenPort()
         {
             try
             {
@@ -169,7 +168,7 @@ namespace Bev.Instruments.P9710
             { }
         }
 
-        private void ClosePort()
+        protected void ClosePort()
         {
             try
             {
