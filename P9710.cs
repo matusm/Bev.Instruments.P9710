@@ -30,15 +30,9 @@ namespace Bev.Instruments.P9710
         public double DetectorCalibrationFactor => GetCalibrationFactor();
         public string DetectorPhotometricUnit => Query("GU");
 
-        public double GetCurrent()
-        {
-            return ParseDoubleFrom(Query("MA"));
-        }
+        public double GetCurrent() => ParseDoubleFrom(Query("MA"));
 
-        public double GetPhotometricValue()
-        {
-            return ParseDoubleFrom(Query("MV"));
-        }
+        public double GetPhotometricValue() => ParseDoubleFrom(Query("MV"));
 
         public MeasurementRange GetMeasurementRange()
         {
@@ -75,6 +69,24 @@ namespace Bev.Instruments.P9710
             }
             return range;
         }
+
+        public void SetMeasurementRange(MeasurementRange measurementRange)
+        {
+            switch (measurementRange)
+            {
+                case MeasurementRange.Unknown:
+                case MeasurementRange.RangeOverflow:
+                    return;
+                default:
+                    DeselectAutorange();
+                    Query($"SR{(int)measurementRange}");
+                    break;
+            }
+        }
+
+        public void SelectAutorange() => Query("SB1");
+
+        public void DeselectAutorange() => Query("SB0");
 
         public MeasurementRange EstimateMeasurementRange(double current)
         {
@@ -138,7 +150,7 @@ namespace Bev.Instruments.P9710
             return errorInterval * 0.577350269;
         }
 
-        // By making this method public one can access full controll over the instrument
+        // By making this method public one can gain full controll over the instrument
         protected string Query(string command)
         {
             string answer = "???";
@@ -189,20 +201,11 @@ namespace Bev.Instruments.P9710
             return tokens.Length < 2 ? (new string[] { "?", "?" }) : tokens;
         }
 
-        private string GetSoftwareVersion()
-        {
-            return Query("GI");
-        }
+        private string GetSoftwareVersion() => Query("GI");
 
-        private string GetDeviceSerialNumber()
-        {
-            return Query("TT");
-        }
+        private string GetDeviceSerialNumber() => Query("TT");
 
-        private string GetDeviceVariant()
-        {
-            return Query("TF");
-        }
+        private string GetDeviceVariant() => Query("TF");
 
         private string GetDetectorID()
         {
@@ -233,20 +236,9 @@ namespace Bev.Instruments.P9710
             return id;
         }
 
-        private double GetBatteryLevel()
-        {
-            return ParseDoubleFrom(Query("MB"));
-        }
+        private double GetBatteryLevel() => ParseDoubleFrom(Query("MB"));
 
-        private double GetCalibrationFactor()
-        {
-            return ParseDoubleFrom(Query("GS4"));
-        }
-
-        private void SelectAutorange()
-        {
-            Query("SB1");
-        }
+        private double GetCalibrationFactor() => ParseDoubleFrom(Query("GS4"));
 
         private double ParseDoubleFrom(string s)
         {
@@ -260,16 +252,16 @@ namespace Bev.Instruments.P9710
 
     public enum MeasurementRange
     {
-        Unknown,
-        RangeOverflow, // >1.999 mA
-        Range03, // 1.999 mA -  0.200 mA
-        Range04, // 199.9 uA -   20.0 uA
-        Range05, // 19.99 uA -   2.00 uA
-        Range06, // 1.999 uA -  0.200 uA
-        Range07, // 199.9 nA -   20.0 nA
-        Range08, // 19.99 nA -   2.00 nA
-        Range09, // 1.999 nA -  0.200 nA
-        Range10  // 199.9 pA -  000.0 pA (this range seems to be not implemented in our instruments)
+        Unknown = -2,
+        RangeOverflow = -1, // >1.999 mA
+        Range03 = 0, // 1.999 mA -  0.200 mA
+        Range04 = 1, // 199.9 uA -   20.0 uA
+        Range05 = 2, // 19.99 uA -   2.00 uA
+        Range06 = 3, // 1.999 uA -  0.200 uA
+        Range07 = 4, // 199.9 nA -   20.0 nA
+        Range08 = 5, // 19.99 nA -   2.00 nA
+        Range09 = 6, // 1.999 nA -  0.200 nA
+        Range10 = 7  // 199.9 pA -  000.0 pA (this range seems to be not implemented in our instruments)
     }
 
 }
