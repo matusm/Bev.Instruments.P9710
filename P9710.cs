@@ -103,13 +103,9 @@ namespace Bev.Instruments.P9710
             return MeasurementRange.Range10;
         }
 
-        public double GetMeasurementUncertainty(double current)
-        {
-            var range = EstimateMeasurementRange(current);
-            return GetMeasurementUncertainty(current, range);
-        }
+        public double GetSpecification(double current) => GetSpecification(current, EstimateMeasurementRange(current));
 
-        public double GetMeasurementUncertainty(double current, MeasurementRange range)
+        public double GetSpecification(double current, MeasurementRange range)
         {
             double errorInterval = 0;
             current = Math.Abs(current);
@@ -146,9 +142,12 @@ namespace Bev.Instruments.P9710
                 default:
                     break;
             }
-            // divide by Sqrt(3) for standard uncertainty
-            return errorInterval * 0.577350269;
+            return errorInterval;
         }
+
+        public double GetMeasurementUncertainty(double current) => GetMeasurementUncertainty(current, EstimateMeasurementRange(current));
+
+        public double GetMeasurementUncertainty(double current, MeasurementRange range) => Math.Sqrt(1.0 / 3.0) * GetSpecification(current, range);
 
         // By making this method public one can gain full controll over the instrument
         protected string Query(string command)
