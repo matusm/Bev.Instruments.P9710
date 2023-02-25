@@ -14,7 +14,7 @@ namespace Bev.Instruments.P9710
         {
             DevicePort = portName.Trim();
             comPort = new SerialPort(DevicePort, 9600);
-            SelectAutorange();
+            SelectAutoRange();
         }
 
         public string DevicePort { get; }
@@ -78,15 +78,15 @@ namespace Bev.Instruments.P9710
                 case MeasurementRange.RangeOverflow:
                     return;
                 default:
-                    DeselectAutorange();
+                    DeselectAutoRange();
                     Query($"SR{(int)measurementRange}");
                     break;
             }
         }
 
-        public void SelectAutorange() => Query("SB1");
+        public void SelectAutoRange() => Query("SB1");
 
-        public void DeselectAutorange() => Query("SB0");
+        public void DeselectAutoRange() => Query("SB0");
 
         public MeasurementRange EstimateMeasurementRange(double current)
         {
