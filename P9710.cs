@@ -14,7 +14,7 @@ namespace Bev.Instruments.P9710
         {
             DevicePort = portName.Trim();
             comPort = new SerialPort(DevicePort, 9600);
-            SelectAutorange();
+            SelectAutoRange();
         }
 
         public string DevicePort { get; }
@@ -30,15 +30,9 @@ namespace Bev.Instruments.P9710
         public double DetectorCalibrationFactor => GetCalibrationFactor();
         public string DetectorPhotometricUnit => Query("GU");
 
-        public double GetCurrent()
-        {
-            return ParseDoubleFrom(Query("MA"));
-        }
+        public double GetCurrent() => ParseDoubleFrom(Query("MA"));
 
-        public double GetPhotometricValue()
-        {
-            return ParseDoubleFrom(Query("MV"));
-        }
+        public double GetPhotometricValue() => ParseDoubleFrom(Query("MV"));
 
         public MeasurementRange GetMeasurementRange()
         {
@@ -76,6 +70,24 @@ namespace Bev.Instruments.P9710
             return range;
         }
 
+        public void SetMeasurementRange(MeasurementRange measurementRange)
+        {
+            switch (measurementRange)
+            {
+                case MeasurementRange.Unknown:
+                case MeasurementRange.RangeOverflow:
+                    return;
+                default:
+                    DeselectAutoRange();
+                    Query($"SR{(int)measurementRange}");
+                    break;
+            }
+        }
+
+        public void SelectAutoRange() => Query("SB1");
+
+        public void DeselectAutoRange() => Query("SB0");
+
         public MeasurementRange EstimateMeasurementRange(double current)
         {
             if (double.IsNaN(current)) return MeasurementRange.Unknown;
@@ -91,13 +103,9 @@ namespace Bev.Instruments.P9710
             return MeasurementRange.Range10;
         }
 
-        public double GetMeasurementUncertainty(double current)
-        {
-            var range = EstimateMeasurementRange(current);
-            return GetMeasurementUncertainty(current, range);
-        }
+        public double GetSpecification(double current) => GetSpecification(current, EstimateMeasurementRange(current));
 
-        public double GetMeasurementUncertainty(double current, MeasurementRange range)
+        public double GetSpecification(double current, MeasurementRange range)
         {
             double errorInterval = 0;
             current = Math.Abs(current);
@@ -134,11 +142,14 @@ namespace Bev.Instruments.P9710
                 default:
                     break;
             }
-            // divide by Sqrt(3) for standard uncertainty
-            return errorInterval * 0.577350269;
+            return errorInterval;
         }
 
-        // By making this method public one can access full controll over the instrument
+        public double GetMeasurementUncertainty(double current) => GetMeasurementUncertainty(current, EstimateMeasurementRange(current));
+
+        public double GetMeasurementUncertainty(double current, MeasurementRange range) => Math.Sqrt(1.0 / 3.0) * GetSpecification(current, range);
+
+        // By making this method public one can gain full controll over the instrument
         protected string Query(string command)
         {
             string answer = "???";
@@ -189,20 +200,11 @@ namespace Bev.Instruments.P9710
             return tokens.Length < 2 ? (new string[] { "?", "?" }) : tokens;
         }
 
-        private string GetSoftwareVersion()
-        {
-            return Query("GI");
-        }
+        private string GetSoftwareVersion() => Query("GI");
 
-        private string GetDeviceSerialNumber()
-        {
-            return Query("TT");
-        }
+        private string GetDeviceSerialNumber() => Query("TT");
 
-        private string GetDeviceVariant()
-        {
-            return Query("TF");
-        }
+        private string GetDeviceVariant() => Query("TF");
 
         private string GetDetectorID()
         {
@@ -233,20 +235,9 @@ namespace Bev.Instruments.P9710
             return id;
         }
 
-        private double GetBatteryLevel()
-        {
-            return ParseDoubleFrom(Query("MB"));
-        }
+        private double GetBatteryLevel() => ParseDoubleFrom(Query("MB"));
 
-        private double GetCalibrationFactor()
-        {
-            return ParseDoubleFrom(Query("GS4"));
-        }
-
-        private void SelectAutorange()
-        {
-            Query("SB1");
-        }
+        private double GetCalibrationFactor() => ParseDoubleFrom(Query("GS4"));
 
         private double ParseDoubleFrom(string s)
         {
@@ -256,20 +247,6 @@ namespace Bev.Instruments.P9710
                 return double.NaN;
         }
 
-    }
-
-    public enum MeasurementRange
-    {
-        Unknown,
-        RangeOverflow, // >1.999 mA
-        Range03, // 1.999 mA -  0.200 mA
-        Range04, // 199.9 uA -   20.0 uA
-        Range05, // 19.99 uA -   2.00 uA
-        Range06, // 1.999 uA -  0.200 uA
-        Range07, // 199.9 nA -   20.0 nA
-        Range08, // 19.99 nA -   2.00 nA
-        Range09, // 1.999 nA -  0.200 nA
-        Range10  // 199.9 pA -  000.0 pA (this range seems to be not implemented in our instruments)
     }
 
 }
