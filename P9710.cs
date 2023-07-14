@@ -19,7 +19,7 @@ namespace Bev.Instruments.P9710
 
         public string DevicePort { get; }
 
-        public string InstrumentManufacturer => "Gigahertz-Optik GmbH";
+        public string InstrumentManufacturer => "Gigahertz-Optik GmbH 2";
         public string InstrumentType => $"{ParseSoftwareVersion()[0]}-{GetDeviceVariant()}";
         public string InstrumentSerialNumber => GetDeviceSerialNumber();
         public string InstrumentFirmwareVersion => ParseSoftwareVersion()[1];
